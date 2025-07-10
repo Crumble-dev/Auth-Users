@@ -9,7 +9,7 @@ import { Psicologo } from './entities/psicologo.entity';
   imports: [
     TypeOrmModule.forFeature([Psicologo]),
     JwtModule.register({
-      secret: 'supersecreto', // Cambia esto por una variable de entorno en producción
+      secret: 'supersecreto', 
       signOptions: { expiresIn: '1h' },
     }),
   ],

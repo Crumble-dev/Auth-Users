@@ -58,4 +58,3 @@ export const envs = {
   },
 };
 
-console.log(envs);
