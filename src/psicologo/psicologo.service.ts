@@ -15,8 +15,8 @@ function normalizeString(str: string): string {
   return str
     .toUpperCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // Quita tildes
-    .replace(/\s+/g, ' ') // Espacios múltiples a uno
+    .replace(/[\u0300-\u036f]/g, '') 
+    .replace(/\s+/g, ' ') 
     .trim();
 }
 
@@ -94,16 +94,15 @@ export class PsicologoService {
     const paterno = apellidos[0] || '';
     const materno = apellidos[1] || '';
 
-    // Validar cédula con la SEP antes de guardar
-    // const cedulaValida = await validarCedulaSEP(
-    //   createPsicologoDto.nombre,
-    //   paterno,
-    //   materno,
-    //   createPsicologoDto.cedulaProfesional
-    // );
-    // if (!cedulaValida) {
-    //   throw new BadRequestException('La cédula profesional y el nombre no coinciden con la SEP');
-    // }
+    const cedulaValida = await validarCedulaSEP(
+      createPsicologoDto.nombre,
+      paterno,
+      materno,
+      createPsicologoDto.cedulaProfesional
+    );
+    if (!cedulaValida) {
+      throw new BadRequestException('La cédula profesional y el nombre no coinciden con la SEP');
+    }
 
     const hash = await bcrypt.hash(createPsicologoDto.contrasena, 10);
     const psicologo = this.psicologoRepository.create({
