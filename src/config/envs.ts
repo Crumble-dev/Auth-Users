@@ -56,5 +56,9 @@ export const envs = {
     password: env.DB_PASSWORD,
     database: env.DB_DATABASE,
   },
+
+
 };
+
+console.log(envs)
 
