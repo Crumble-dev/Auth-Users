@@ -2,10 +2,17 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Headers } from '@nes
 import { PsicologoService } from './psicologo.service';
 import { CreatePsicologoDto } from './dto/create-psicologo.dto';
 import { UpdatePsicologoDto } from './dto/update-psicologo.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Usuario } from '../usuario/entities/usuario.entity';
 
 @Controller('psicologo')
 export class PsicologoController {
-  constructor(private readonly psicologoService: PsicologoService) {}
+  constructor(
+    private readonly psicologoService: PsicologoService,
+    @InjectRepository(Usuario)
+    private readonly usuarioRepository: Repository<Usuario>,
+  ) {}
 
   @Post()
   create(@Body() createPsicologoDto: CreatePsicologoDto) {
@@ -42,5 +49,15 @@ export class PsicologoController {
     // El token debe venir como 'Bearer <token>'
     const token = authHeader?.split(' ')[1];
     return this.psicologoService.logout(token);
+  }
+
+  @Get(':id/pacientes')
+  getPacientes(@Param('id') id: string) {
+    return this.psicologoService.getPacientesByPsicologo(+id);
+  }
+
+  @Get(':id/parejas')
+  getParejas(@Param('id') id: string) {
+    return this.psicologoService.getParejasByPsicologo(+id);
   }
 }

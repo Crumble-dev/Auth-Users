@@ -19,6 +19,7 @@ export class UsuarioController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
+    console.log(id);
     return this.usuarioService.findOne(+id);
   }
 

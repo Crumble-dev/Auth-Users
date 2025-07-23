@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException, BadRequestException, UnauthorizedException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
@@ -7,6 +6,8 @@ import axios from 'axios';
 import { CreatePsicologoDto } from './dto/create-psicologo.dto';
 import { UpdatePsicologoDto } from './dto/update-psicologo.dto';
 import { Psicologo } from './entities/psicologo.entity';
+import { Usuario } from '../usuario/entities/usuario.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 const invalidatedTokens = new Set<string>();
 
@@ -82,6 +83,8 @@ export class PsicologoService {
   constructor(
     @InjectRepository(Psicologo)
     private readonly psicologoRepository: Repository<Psicologo>,
+    @InjectRepository(Usuario)
+    private readonly usuarioRepository: Repository<Usuario>,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -160,5 +163,26 @@ export class PsicologoService {
   // Método para verificar si un token está invalidado
   isTokenInvalidated(token: string): boolean {
     return invalidatedTokens.has(token);
+  }
+
+  async getPacientesByPsicologo(psicologoId: number) {
+    return this.usuarioRepository.find({ where: { idPsicologo: psicologoId } });
+  }
+
+  async getParejasByPsicologo(psicologoId: number) {
+    // 1. Obtén los usuarios del psicólogo
+    const usuarios = await this.usuarioRepository.find({ where: { idPsicologo: psicologoId } });
+    const idsUsuarios = usuarios.map(u => u.id);
+
+    // 2. Obtén todas las parejas del microservicio
+    const response = await axios.get('https://cl-terapia.onrender.com/parejas', {
+      headers: { 'User-Agent': 'insomnia/11.2.0' }
+    });
+    const parejas = response.data;
+
+    // 3. Filtra las parejas donde alguno de los miembros pertenezca al psicólogo
+    return parejas.filter((p: any) =>
+      idsUsuarios.includes(p.idParejaA) || idsUsuarios.includes(p.idParejaB)
+    );
   }
 }
