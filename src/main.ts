@@ -8,6 +8,7 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'https://dasboardadmincl.netlify.app/',
+      'https://cl-dashboard-jvin.vercel.app/',
       'http://localhost:5173',
       'https://tusitio.netlify.app'
     ],
