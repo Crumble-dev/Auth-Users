@@ -4,12 +4,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { envs } from './config/envs';
 
 import { PsicologoModule } from './psicologo/psicologo.module';
-
+import { JwtStrategy } from './auth/jwt.strategy';
 
 import { Usuario } from './usuario/entities/usuario.entity';
 import { Psicologo } from './psicologo/entities/psicologo.entity';
 import { UsuarioModule } from './usuario/usuario.module';
-
+import { Logueo } from './psicologo/entities/logueo.entity';
 
 
 @Module({
@@ -21,7 +21,7 @@ import { UsuarioModule } from './usuario/usuario.module';
       username: envs.database.username,
       password: envs.database.password,
       database: envs.database.database,
-      entities: [Usuario, Psicologo],
+      entities: [Usuario, Psicologo, Logueo],
       synchronize: true,
       logging: true,
     }),
@@ -29,10 +29,11 @@ import { UsuarioModule } from './usuario/usuario.module';
 
     PsicologoModule,
     UsuarioModule, 
+    Logueo
   ],
   controllers: [],
   providers: [
-
+    JwtStrategy,
   ],
 })
 export class AppModule {}

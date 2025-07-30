@@ -7,6 +7,7 @@ import { CreatePsicologoDto } from './dto/create-psicologo.dto';
 import { UpdatePsicologoDto } from './dto/update-psicologo.dto';
 import { Psicologo } from './entities/psicologo.entity';
 import { Usuario } from '../usuario/entities/usuario.entity';
+import { Logueo } from '../psicologo/entities/logueo.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 
 const invalidatedTokens = new Set<string>();
@@ -85,6 +86,8 @@ export class PsicologoService {
     private readonly psicologoRepository: Repository<Psicologo>,
     @InjectRepository(Usuario)
     private readonly usuarioRepository: Repository<Usuario>,
+    @InjectRepository(Logueo)
+    private readonly logueoRepository: Repository<Logueo>,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -150,7 +153,11 @@ export class PsicologoService {
     if (!valid) throw new BadRequestException('Contraseña incorrecta');
     const payload = { sub: psicologo.id, correo: psicologo.correo };
     const token = this.jwtService.sign(payload);
-    return { psicologo, token };
+
+    // Guardar logueo
+    await this.logueoRepository.save({ userId: psicologo.id });
+
+    return { psicologo, token, logueadoEn: new Date() };
   }
 
   // Logout: invalida el token recibido

@@ -5,10 +5,11 @@ import { PsicologoService } from './psicologo.service';
 import { PsicologoController } from './psicologo.controller';
 import { Psicologo } from './entities/psicologo.entity';
 import { Usuario } from '../usuario/entities/usuario.entity';
+import { Logueo } from '../psicologo/entities/logueo.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Psicologo, Usuario]),
+    TypeOrmModule.forFeature([Psicologo, Usuario, Logueo]),
     JwtModule.register({
       secret: 'supersecreto', 
       signOptions: { expiresIn: '1h' },
